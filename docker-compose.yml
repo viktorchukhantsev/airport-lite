@@ -1,0 +1,32 @@
+version: '3'
+services:
+  web:
+    build: .
+    command: >
+      bash -c "
+      rm -f /app/tmp/pids/server.pid
+      && bundle exec rails db:drop
+      && bundle exec rails db:create
+      && bundle exec rails db:migrate
+      && bundle exec rails db:seed
+      && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    volumes:
+      - .:/app
+    ports:
+      - "3000:3000"
+    environment:
+      - RAILS_ENV=production
+      - DISABLE_DATABASE_ENVIRONMENT_CHECK=1
+  web_test:
+    build: .
+    command: >
+      bash -c "
+      rm -f /app/tmp/pids/server.pid
+      && bundle exec rails db:drop
+      && bundle exec rails db:create
+      && bundle exec rails db:migrate
+      && bundle exec rspec"
+    volumes:
+      - .:/app
+    environment:
+      - RAILS_ENV=test
